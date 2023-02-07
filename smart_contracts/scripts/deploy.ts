@@ -1,8 +1,14 @@
 import { ethers, upgrades } from "hardhat";
+import hre from "hardhat"
+
+function delay(ms: number) {
+  console.log("Pause for: ", ms / 1000);
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 async function main() {
 
-  const StablecoinFactory = await ethers.getContractFactory("Stablecoin")
+  const StablecoinFactory = await ethers.getContractFactory("Hacienda")
   const Stablecoin = await upgrades.deployProxy(StablecoinFactory, [], {
     initializer: 'initialize',
     kind: "uups"
@@ -11,6 +17,15 @@ async function main() {
   await Stablecoin.deployed();
 
   console.log(Stablecoin.address)
+
+  await delay(20000);
+
+  await hre.run("verify:verify", {
+    address: Stablecoin.address,
+    constructorArguments: [
+    ],
+
+  });  
 }
 
 // We recommend this pattern to be able to use async/await everywhere
