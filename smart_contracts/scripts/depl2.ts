@@ -8,35 +8,7 @@ function delay(ms: number) {
   
 async function main() {
 
-    // // MyToken
-    // const tssssssFactory = await ethers.getContractFactory("ts2")
-    // const tsssss = await tssssssFactory.deploy(
-    // );
-    // await tsssss.deployed();
-    // console.log(tsssss.address, "tsssss")
 
-
-    // const VoidersTokenFactory = await ethers.getContractFactory("VoidersToken")
-    // const VoidersToken = await upgrades.deployProxy(VoidersTokenFactory, [], {
-    //   initializer: 'initialize',
-    //   kind: "uups"
-    // });
-
-    // await VoidersToken.deployed();
-    // console.log(VoidersToken.address, "VoidersToken")
-
-    //   if (switcher >1){
-    //     await delay(20000);
-
-    //     await hre.run("verify:verify", {
-    //       address: VoidersToken.address,
-    //       constructorArguments: [
-    //       ],
-      
-    //     });
-    //   }
-
-  
   
   
 
