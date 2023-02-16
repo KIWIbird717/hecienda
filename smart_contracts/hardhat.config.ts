@@ -23,14 +23,24 @@ const config: HardhatUserConfig = {
 			url: "https://polygon-mumbai.g.alchemy.com/v2/QMkUZUk7wDJRIVsBWFBQnEyvDE2yW7Np",
 			accounts:
 				process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-		  },
+    },
+    bscTestnet: {
+      url: "https://data-seed-prebsc-1-s3.binance.org:8545",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
+    bscMainnet: {
+      url: "https://bsc-dataseed.binance.org/",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
     // mainnet: {
     //   url: process.env.PROVIDER,
     //   accounts: [process.env.PRIVATE_KEY!],
     // },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY ,
+    apiKey: "AFEMDPHAWXPHKI8SQJK9AS77UIAZN9NGCN",
 
     // polygonMumbai: "AFEMDPHAWXPHKI8SQJK9AS77UIAZN9NGCN" ,
 

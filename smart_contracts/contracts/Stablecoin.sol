@@ -28,7 +28,7 @@ contract Hacienda is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUp
         override
     {}
 
-        function _beforeTokenTransfer(address from, address to, uint256 amount)
+    function _beforeTokenTransfer(address from, address to, uint256 amount)
         internal
         override
     {
