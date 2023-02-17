@@ -2,22 +2,32 @@
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./vesting/LinearVestingVaultFactory.sol";
 
 contract ticketExchange is Ownable{
     IERC20 usdt;
     IERC20 token;
+    LinearVestingVaultFactory vesting;
+
     uint cost;
     uint constant div = 1000;
+
+    uint startTimestamp;
+    uint endTimestamp;
     //todo ограничение на количество
     mapping(address => bool) public whitelisted;
 
     event swap(address to, uint amount);
 
 
-    constructor(address _address, uint _cost, string memory name_, string memory symbol_, address _tokenAddress){
+    constructor(address _address, uint _cost, address _tokenAddress, address _vesting, uint _startTimestamp, uint _endTimestamp){
         usdt =  IERC20(_address);
         token = IERC20(_tokenAddress);
+        vesting = LinearVestingVaultFactory(_vesting);
         cost = _cost;
+
+        startTimestamp = _startTimestamp;
+        endTimestamp =_endTimestamp;
     }
 
     modifier onlyWhitelisted {
@@ -29,7 +39,7 @@ contract ticketExchange is Ownable{
         require(msg.sender == owner(), "Only owner can whitelist");
 
         uint size = _users.length;
-
+ 
         for(uint256 i=0; i< size; i++){
             address user = _users[i];
             whitelisted[user] = true;
@@ -40,6 +50,7 @@ contract ticketExchange is Ownable{
         
         usdt.transferFrom(msg.sender, address(this), amount * (cost / div));
         token.transfer(msg.sender, amount);
+        vesting.createVault(address(token), msg.sender, startTimestamp, endTimestamp, amount);
         emit swap(msg.sender, amount);
     }
 
