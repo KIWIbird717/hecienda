@@ -4,7 +4,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./vesting/LinearVestingVaultFactory.sol";
 
-contract ticketExchange is Ownable{
+contract exchange is Ownable{
     IERC20 usdt;
     IERC20 token;
     LinearVestingVaultFactory vesting;
@@ -14,17 +14,23 @@ contract ticketExchange is Ownable{
 
     uint startTimestamp;
     uint endTimestamp;
+
+    uint max;
+    uint min;
     //todo ограничение на количество
     mapping(address => bool) public whitelisted;
 
     event swap(address to, uint amount);
 
 
-    constructor(address _address, uint _cost, address _tokenAddress, address _vesting, uint _startTimestamp, uint _endTimestamp){
+    constructor(address _address, uint _cost, address _tokenAddress, address _vesting, uint _startTimestamp, uint _endTimestamp, uint _max, uint _min){
         usdt =  IERC20(_address);
         token = IERC20(_tokenAddress);
         vesting = LinearVestingVaultFactory(_vesting);
         cost = _cost;
+
+        max = _max;
+        min = _min;
 
         startTimestamp = _startTimestamp;
         endTimestamp =_endTimestamp;
@@ -47,6 +53,9 @@ contract ticketExchange is Ownable{
     }
 
     function buyTickets(uint amount) public onlyWhitelisted{
+
+        require(amount <= max, "too much");
+        require(amount >= min, "too little");
         
         usdt.transferFrom(msg.sender, address(this), amount * (cost / div));
         token.transfer(msg.sender, amount);
@@ -57,5 +66,4 @@ contract ticketExchange is Ownable{
     function withdrawall() external onlyOwner{
         usdt.transfer(owner(), usdt.balanceOf(address(this)));
     }
-
 }
