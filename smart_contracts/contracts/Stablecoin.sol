@@ -15,7 +15,7 @@ contract Hacienda is Initializable, ERC20Upgradeable, OwnableUpgradeable, UUPSUp
     }
 
     function initialize() initializer public {
-        __ERC20_init("Hacienda", "HADA");
+        __ERC20_init("usdt token", "usdt");
         __Ownable_init();
         __UUPSUpgradeable_init();
 

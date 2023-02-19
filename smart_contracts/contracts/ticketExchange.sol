@@ -12,28 +12,48 @@ contract exchange is Ownable{
     uint cost;
     uint constant div = 1000;
 
-    uint startTimestamp;
-    uint endTimestamp;
 
     uint max;
     uint min;
     //todo ограничение на количество
     mapping(address => bool) public whitelisted;
+    mapping (address => bool) public bought;
+    mapping (address => address) vault;
 
     event swap(address to, uint amount);
 
 
-    constructor(address _address, uint _cost, address _tokenAddress, address _vesting, uint _startTimestamp, uint _endTimestamp, uint _max, uint _min){
-        usdt =  IERC20(_address);
+    constructor(address _USDTaddress, uint _cost, address _tokenAddress, address _vesting, uint _max, uint _min){
+        usdt =  IERC20(_USDTaddress);
         token = IERC20(_tokenAddress);
-        vesting = LinearVestingVaultFactory(_vesting);
+        vesting = LinearVestingVaultFactory(_vesting); 
         cost = _cost;
 
         max = _max;
         min = _min;
 
-        startTimestamp = _startTimestamp;
-        endTimestamp =_endTimestamp;
+    }
+
+    function getTokenAddress() public view returns (address) {
+        return address(token);
+    }
+
+    
+    function getIUsdtAddress() public view returns (address) {
+        return address(usdt);
+    }
+
+        
+    function getIVestingAddress() public view returns (address) {
+        return address(vesting);
+    }
+
+    function getMin() public view returns (uint) {
+        return min;
+    }
+
+    function getMax() public view returns (uint) {
+        return max;
     }
 
     modifier onlyWhitelisted {
@@ -52,15 +72,36 @@ contract exchange is Ownable{
         }
     }
 
-    function buyTickets(uint amount) public onlyWhitelisted{
 
+    function buyTickets(uint amount) public onlyWhitelisted returns(address){
+
+        require(bought[msg.sender] == false, "already bought");
         require(amount <= max, "too much");
         require(amount >= min, "too little");
+        bought[msg.sender] = true;
+
+
         
-        usdt.transferFrom(msg.sender, address(this), amount * (cost / div));
-        token.transfer(msg.sender, amount);
-        vesting.createVault(address(token), msg.sender, startTimestamp, endTimestamp, amount);
+        usdt.transferFrom(msg.sender, address(this), (amount * cost) );
+        
+        
+        token.transferFrom(owner(), address(this), amount);
+
+        token.transfer(msg.sender, amount / 10);  
+
+
+        token.approve(address(vesting), (amount) / 10 * 9);
+
+
+        address vaultAddress = vesting.createVault(address(token), msg.sender, block.timestamp, block.timestamp + 365 days, (amount) / 10 * 9);
+       
+       vault[msg.sender] = vaultAddress;
         emit swap(msg.sender, amount);
+        return vaultAddress;
+    } 
+
+    function getUserVault(address _address) public view returns (address) {
+        return vault[_address];
     }
 
     function withdrawall() external onlyOwner{

@@ -18,7 +18,7 @@ const config: HardhatUserConfig = {
       url: process.env.PROVIDER,
       accounts: [process.env.PRIVATE_KEY!],
     },
-    maitc: {
+    matic: {
       // allowUnlimitedContractSize: true,
 			url: "https://polygon-mumbai.g.alchemy.com/v2/QMkUZUk7wDJRIVsBWFBQnEyvDE2yW7Np",
 			accounts:
